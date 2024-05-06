@@ -17,6 +17,7 @@ Note: `type: sharegpt` opens special configs:
 - `roles`: allows you to specify the roles for input and output. This is useful for datasets with custom roles such as `tool` etc to support masking.
 - `field_human`: specify the key to use instead of `human` in the conversation.
 - `field_model`: specify the key to use instead of `gpt` in the conversation.
+- `field_tool`: specify the key for `tool` in the conversation.
 
 ```yaml
 datasets:
@@ -26,6 +27,7 @@ datasets:
     conversation: # Options (see Conversation 'name'): https://github.com/lm-sys/FastChat/blob/main/fastchat/conversation.py
     field_human: # Optional[str]. Human key to use for conversation.
     field_model: # Optional[str]. Assistant key to use for conversation.
+    field_tool: # Optional[str]. Tool key to use for conversation.
     # Add additional keys from your dataset as input or output roles
     roles:
       input: # Optional[List[str]]. These will be masked based on train_on_input

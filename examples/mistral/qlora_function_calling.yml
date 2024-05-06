@@ -7,11 +7,13 @@ load_in_4bit: true
 strict: false
 
 datasets:
-  - path: mhenrichsen/alpaca_2k_test
-    type: alpaca
+  - path: glaiveai/glaive-function-calling-v2
+    type: sharegpt.load_glaive
+    conversation: chatml_glaive
+
 dataset_prepared_path: last_run_prepared
 val_set_size: 0.1
-output_dir: ./qlora-out-mistral-ds
+output_dir: ./qlora-out-mistral-fun-call
 
 adapter: qlora
 lora_model_dir:

@@ -1,4 +1,4 @@
-ARG BASE_TAG=main-base
+ARG BASE_TAG=main-base-py3.10-cu118-2.0.1
 FROM winglian/axolotl-base:$BASE_TAG
 
 ARG TORCH_CUDA_ARCH_LIST="7.0 7.5 8.0 8.6+PTX"
@@ -11,7 +11,7 @@ ARG PYTORCH_VERSION="2.1.2"
 ENV PYTORCH_VERSION=$PYTORCH_VERSION
 
 RUN apt-get update && \
-    apt-get install -y --allow-change-held-packages vim curl nano libnccl2 libnccl-dev
+    apt-get install -y --allow-change-held-packages vim curl nano libnccl2 libnccl-dev htop tmux
 
 WORKDIR /workspace
 

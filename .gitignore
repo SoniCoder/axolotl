@@ -174,5 +174,11 @@ wandb
 lora-out/*
 qlora-out/*
 mlruns/*
+devtools/mlruns/*
+
 
 /.quarto/
+qlora-out*
+*-out*
+out
+tilemachos/

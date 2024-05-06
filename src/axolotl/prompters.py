@@ -261,8 +261,11 @@ SHAREGPT_ASSERTION_FAILED_ROLE = (
 
 CONVERSATION_ROLE_FORMAT = {
     "chatml": "<|im_start|>{ROLE}",
+    "chatml_glaive": "<|im_start|>{ROLE}",
+    # "Nous-Hermes-2-Mixtral-8x7B-DPO": "<|im_start|>{ROLE}",
     "zephyr": "<|{ROLE}|>",
     "vicuna_v1.1": "{ROLE}",
+    # "mistral": "{ROLE}",
 }
 
 
@@ -274,6 +277,7 @@ class ShareGPTPrompter(Prompter):  # pylint: disable=too-few-public-methods
     role_key_human = "human"
     role_key_model = "gpt"
     # Optional, only used for tool usage datasets.
+    # role_key_tool: Optional[str] = "tool"
     role_key_tool: Optional[str] = None
     # Optional, role input/output mapping
     roles: Optional[dict] = None
@@ -321,6 +325,7 @@ class ShareGPTPrompter(Prompter):  # pylint: disable=too-few-public-methods
         roles = {self.role_key_human: conv.roles[0], self.role_key_model: conv.roles[1]}
         if self.role_key_tool:
             roles[self.role_key_tool] = conv.roles[2]
+            # roles[self.role_key_tool] = '<|im_start|>tool'
 
         try:
             # Apply prompt templates
@@ -339,7 +344,7 @@ class ShareGPTPrompter(Prompter):  # pylint: disable=too-few-public-methods
             else:
                 if self._conversation.name not in CONVERSATION_ROLE_FORMAT:
                     raise NotImplementedError(
-                        f"Role ({role}) not in default roles, and {self._conversation.name} does not support role remapping yet."
+                        f"From Role ({from_role}) not in default roles {roles}, and {self._conversation.name} does not support role remapping yet."
                         "Please help us by creating an Issue to add support for this conversation type."
                     )
 
@@ -348,6 +353,13 @@ class ShareGPTPrompter(Prompter):  # pylint: disable=too-few-public-methods
                 )
 
             if len(conv.messages) > 0 and ((role == conv.messages[-1][0])):
+                # This is a fine assumption if the repeating role is the model
+                # In this case all we need to do is to append this message("value") to the last one
+                # and continue to the next message
+                # if from_role == self.role_key_model:
+                # conv.messages[-1][1] += sentence["value"]
+                # continue
+                # else:
                 LOG.warning(f"{SHAREGPT_ASSERTION_FAILED_ROLE}: {sentence}")
 
             conv.append_message(role, sentence["value"])
@@ -377,12 +389,14 @@ class ShareGPTPrompterV2(ShareGPTPrompter):
         conversation: Optional[Union[str, Conversation]] = None,
         role_key_human: Optional[str] = None,
         role_key_model: Optional[str] = None,
+        role_key_tool: Optional[str] = None,
         roles: Optional[dict] = None,
     ):
         super().__init__(
             conversation=conversation,
             role_key_human=role_key_human,
             role_key_model=role_key_model,
+            role_key_tool=role_key_tool,
             roles=roles,
         )
 

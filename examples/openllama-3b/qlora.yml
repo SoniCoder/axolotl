@@ -27,8 +27,8 @@ wandb_name:
 wandb_log_model:
 output_dir: ./qlora-out
 gradient_accumulation_steps: 1
-micro_batch_size: 2
-num_epochs: 4
+micro_batch_size: 10
+num_epochs: 1
 optimizer: paged_adamw_32bit
 torchdistx_path:
 lr_scheduler: cosine

@@ -45,12 +45,14 @@ def load(tokenizer, cfg, ds_cfg: Optional[Dict[str, Any]] = None):
     )
     field_human = ds_cfg["field_human"] if ds_cfg and "field_human" in ds_cfg else None
     field_model = ds_cfg["field_model"] if ds_cfg and "field_model" in ds_cfg else None
+    field_tool = ds_cfg["field_tool"] if ds_cfg and "field_tool" in ds_cfg else None
     roles = ds_cfg["roles"].to_dict() if ds_cfg and "roles" in ds_cfg else None
     strategy = SimpleShareGPTPromptTokenizingStrategy(
         ShareGPTPrompterV2(
             conversation=conversation,
             role_key_model=field_model,
             role_key_human=field_human,
+            role_key_tool=field_tool,
             roles=roles,
         ),
         tokenizer,
@@ -103,8 +105,16 @@ def load_glaive(tokenizer, cfg, ds_cfg: Optional[Dict[str, Any]] = None):
         if ds_cfg and "conversation" in ds_cfg
         else "chatml_glaive"
     )
+    field_human = ds_cfg["field_human"] if ds_cfg and "field_human" in ds_cfg else None
+    field_model = ds_cfg["field_model"] if ds_cfg and "field_model" in ds_cfg else None
+    field_tool = ds_cfg["field_tool"] if ds_cfg and "field_tool" in ds_cfg else None
+    roles = ds_cfg["roles"].to_dict() if ds_cfg and "roles" in ds_cfg else None
     return GlaiveShareGPTPromptTokenizingStrategy(
-        ShareGPTPrompterV2(conversation=conversation),
+        ShareGPTPrompterV2(conversation=conversation,
+            role_key_model=field_model,
+            role_key_human=field_human,
+            role_key_tool=field_tool,
+            roles=roles,),
         tokenizer,
         cfg.train_on_inputs,
         cfg.sequence_len,
