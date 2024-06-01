@@ -22,7 +22,7 @@ def register_chatml_template(system_message=None):
             name="chatml",
             system_template="<|im_start|>system\n{system_message}",
             system_message=system_message,
-            roles=["<|im_start|>user", "<|im_start|>assistant"],
+            roles=["<|im_start|>user", "<|im_start|>assistant", "<|im_start|>tool"],
             sep_style=SeparatorStyle.CHATML,
             sep="<|im_end|>",
         )
@@ -114,7 +114,7 @@ def load_glaive(tokenizer, cfg, ds_cfg: Optional[Dict[str, Any]] = None):
             role_key_model=field_model,
             role_key_human=field_human,
             role_key_tool=field_tool,
-            roles=roles,),
+            roles=roles),
         tokenizer,
         cfg.train_on_inputs,
         cfg.sequence_len,
@@ -209,7 +209,7 @@ class UltrachatShareGPTPromptTokenizingStrategy(SimpleShareGPTPromptTokenizingSt
         return turns
 
 
-class GlaiveShareGPTPromptTokenizingStrategy(SimpleShareGPTPromptTokenizingStrategy):
+class GlaiveShareGPTPromptTokenizingStrategy(ShareGPTPromptTokenizingStrategy):
     """
     sharegpt strategy that remaps glaive data to sharegpt format
     """

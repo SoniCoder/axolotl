@@ -2,14 +2,14 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel, PeftConfig, LoraConfig, get_peft_model
 
 # Path to your fine-tuned model and tokenizer
-model_path = "qlora-out-mistral"
+model_path = "qlora-out-mistral-fun-call/merged"
 
 # Load the tokenizer
 tokenizer = AutoTokenizer.from_pretrained(model_path)
 if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
 
-config = PeftConfig.from_pretrained(model_path)
+# config = PeftConfig.from_pretrained(model_path)
 
 # Load the fine-tuned model
 model = AutoModelForCausalLM.from_pretrained(model_path, load_in_4bit=True, device_map="auto")
@@ -18,7 +18,7 @@ model = AutoModelForCausalLM.from_pretrained(model_path, load_in_4bit=True, devi
 # model = model.merge_and_unload()
 
 # Function to generate text
-def generate_text(prompt, max_length=100, model_inp=model):
+def generate_text(prompt, max_length=8000, model_inp=model):
     # Encode the prompt into tokens
     # input_ids = tokenizer.encode(prompt, return_tensors='pt')
     inputs = tokenizer(prompt, return_tensors='pt', padding=True, truncation=True, max_length=max_length)
@@ -34,6 +34,36 @@ def generate_text(prompt, max_length=100, model_inp=model):
     return generated_text
 
 # Example usage
-prompt = "Give three tips for staying healthy"
+# prompt = "Give three tips for staying healthy"
+prompt = """
+<|im_start|>system
+You are a helpful assistant with access to the following functions. Use them if required-                                                                                                                
+{                                                                                                                                                                                                         
+    "name": "calculate_mean",                                                                                                                                                                           
+    "description": "Calculate the mean of a list of numbers",                                                                                                                                               "parameters": {                                                                                                                                                                                       
+        "type": "object",                                                                                                                                                                                 
+        "properties": {                                                                                                                                                                                   
+            "numbers": {                                                                                                                                                                                  
+                "type": "array",                                                                                                                                                                          
+                "items": {                                                                                                                                                                                
+                    "type": "number"                                                                                                                                                                      
+                },
+                "description": "A list of numbers" 
+            }
+        },
+        "required": [
+            "numbers"
+        ]
+    }
+}
+<|im_end|>
+ <|im_start|>user
+Hi, I have a list of numbers and I need to find the mean. Can you help me with that?<|im_end|>
+<|im_start|>assistant
+Of course, I can help you with that. Please provide me with the list of numbers. <|endoftext|><|im_end|>
+<|im_start|>user
+The numbers are 1, 2, 3, 1, 7, 4, 6, 3, 8.<|im_end|>
+ <|im_start|>assistant
+"""
 generated_text = generate_text(prompt)
 print("Generated Text:", generated_text)
